@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: agentguard-sample
+
+server:
+  port: 8080
+
+agentguard:
+  enabled: true
+  tenant-header: X-Tenant-Id
+  block-on-error-severity: ERROR
+  budget:
+    max-tokens: 100000
+    max-cost-micros: 5000000
+    max-calls: 50
+  rate-limit:
+    permits: 60
+    window: 60s
+  redaction:
+    enabled: true
+    phone: true
+    id-card: true
+    bank-card: true
+    email: true
+    ip: true
