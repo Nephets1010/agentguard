@@ -57,13 +57,13 @@ public class AgentguardDemo {
     /** 跑一遍示例并打印每一步的判定。 */
     public void run() {
         log.info("agentguard demo start");
-        System.out.println("== agentguard 示例 ==");
+        log.info("== agentguard 示例 ==");
         demoBlockedInput();
         demoRedactedOutput();
         demoDeniedTool();
         demoApprovalTool();
         demoBudget();
-        System.out.println("== 示例结束 ==");
+        log.info("== 示例结束 ==");
         log.info("agentguard demo end");
     }
 
@@ -75,10 +75,9 @@ public class AgentguardDemo {
                                 .stage(GuardrailContext.STAGE_INPUT)
                                 .text(text)
                                 .build());
-        System.out.println(
-                "1) 输入检测: action=" + result.action() + " 命中=" + result.findings().size());
+        log.info("1) 输入检测: action={} 命中={}", result.action(), result.findings().size());
         for (Finding finding : result.findings()) {
-            System.out.println("   - " + finding);
+            log.info("   - {}", finding);
         }
         log.info(
                 "demoBlockedInput: action={} findings={}",
@@ -94,9 +93,11 @@ public class AgentguardDemo {
                                 .stage(GuardrailContext.STAGE_OUTPUT)
                                 .text(text)
                                 .build());
-        System.out.println("2) 输出脱敏: action=" + result.action());
-        System.out.println("   原文  : " + text);
-        System.out.println("   脱敏后: " + result.sanitizedText());
+        log.info(
+                "2) 输出脱敏: action={}\n   原文  : {}\n   脱敏后: {}",
+                result.action(),
+                text,
+                result.sanitizedText());
         log.info("demoRedactedOutput: action={}", result.action());
     }
 
@@ -108,7 +109,7 @@ public class AgentguardDemo {
                         .argument("table", "orders")
                         .build();
         ToolDecision decision = toolPolicy.authorize(call);
-        System.out.println("3) 工具鉴权 db.write(roles=user): " + decision);
+        log.info("3) 工具鉴权 db.write(roles=user): {}", decision);
         log.info("demoDeniedTool: tool=db.write principal=alice decision={}", decision);
     }
 
@@ -120,7 +121,7 @@ public class AgentguardDemo {
                         .argument("table", "orders")
                         .build();
         ToolDecision decision = toolPolicy.authorize(call);
-        System.out.println("4) 工具鉴权 db.drop(roles=admin): " + decision);
+        log.info("4) 工具鉴权 db.drop(roles=admin): {}", decision);
         log.info("demoApprovalTool: tool=db.drop principal=root decision={}", decision);
     }
 
@@ -135,8 +136,7 @@ public class AgentguardDemo {
         } catch (BudgetExceededException e) {
             line.append("超出预算 -> ").append(e.getMessage());
         }
-        System.out.println(line);
-        System.out.println("   直接脱敏示例: " + redactor.redact("联系邮箱 alice@example.com"));
+        log.info("{}\n   直接脱敏示例: {}", line, redactor.redact("联系邮箱 alice@example.com"));
         log.info("demoBudget finished: {}", line);
     }
 }
